@@ -10,20 +10,66 @@ var connectingElement = document.querySelector('.connecting');
 
 var stompClient = null;
 var username = null;
+var password = null;
 
 function connect(event) {
     username = document.querySelector('#name').value.trim();
+    password = document.querySelector('#password').value.trim();
 
-    if(username) {
-        usernamePage.classList.add('hidden');
-        chatPage.classList.remove('hidden');
-        var socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, onConnected, onError);
+    if(username&&password) {
+        loginWithRetry(username,password);
     }
     event.preventDefault();
 }
 
+function loginWithRetry(username,password){
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/login');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(`username=${username}&password=${password}`);
+    xhr.onload = () => {
+        var sessionResponse = JSON.parse(xhr.responseText);
+        if(sessionResponse&&sessionResponse.code==0){
+            stompConnect();
+        }else{
+            registerThenLogin(sessionResponse.message);
+        }
+    }
+}
+
+function registerThenLogin(username,password){
+    var registerXhr = new XMLHttpRequest();
+    xhr.open('POST', '/session');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(`username=${username}&password=${password}`);
+    xhr.onload = () => {
+        var sessionResponse = JSON.parse(xhr.responseText);
+        if(sessionResponse&&sessionResponse.code==0){
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/login');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.send(`username=${username}&password=${password}`);
+                xhr.onload = () => {
+                    var sessionResponse = JSON.parse(xhr.responseText);
+                    if(sessionResponse&&sessionResponse.code==0){
+                        stompConnect();
+                    }else{
+                        alert(sessionResponse.message);
+                    }
+                }
+        }else{
+            alert(sessionResponse.message);
+        }
+    }
+}
+
+function stompConnect(){
+    usernamePage.classList.add('hidden');
+    chatPage.classList.remove('hidden');
+    var socket = new SockJS('./ws');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, onConnected, onError);
+}
 
 function onConnected() {
     // Subscribe to the Public Topic
