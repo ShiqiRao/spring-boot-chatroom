@@ -32,18 +32,18 @@ function loginWithRetry(username,password){
         if(sessionResponse&&sessionResponse.code==0){
             stompConnect();
         }else{
-            registerThenLogin(sessionResponse.message);
+            registerThenLogin(username,password);
         }
     }
 }
 
 function registerThenLogin(username,password){
     var registerXhr = new XMLHttpRequest();
-    xhr.open('POST', '/session');
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.send(`username=${username}&password=${password}`);
-    xhr.onload = () => {
-        var sessionResponse = JSON.parse(xhr.responseText);
+    registerXhr.open('POST', '/session');
+    registerXhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    registerXhr.send(`username=${username}&password=${password}`);
+    registerXhr.onload = () => {
+        var sessionResponse = JSON.parse(registerXhr.responseText);
         if(sessionResponse&&sessionResponse.code==0){
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', '/login');
@@ -74,6 +74,9 @@ function stompConnect(){
 function onConnected() {
     // Subscribe to the Public Topic
     stompClient.subscribe('/topic/public', onMessageReceived);
+
+    stompClient.subscribe('/app/chat.lastTenMessage', onMessageReceived);
+
 
     // Tell your username to the server
     stompClient.send("/app/chat.addUser",
