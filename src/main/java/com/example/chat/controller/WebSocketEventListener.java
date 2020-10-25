@@ -1,6 +1,6 @@
 package com.example.chat.controller;
 
-import com.example.chat.model.ChatMessage;
+import com.example.chat.entity.TChatMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -30,10 +30,10 @@ public class WebSocketEventListener {
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         if (username != null) {
             log.info("User Disconnected : " + username);
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setType(ChatMessage.MessageType.LEAVE);
-            chatMessage.setSender(username);
-            messagingTemplate.convertAndSend("/topic/public", chatMessage);
+            TChatMessage tChatMessage = new TChatMessage()
+                    .setType(TChatMessage.MessageType.LEAVE)
+                    .setSender(username);
+            messagingTemplate.convertAndSend("/topic/public", tChatMessage);
         }
     }
 }
