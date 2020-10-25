@@ -21,11 +21,13 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+        //处理连接事件
         log.info("Received a new web socket connection");
     }
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        //处理离线事件
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         if (username != null) {
@@ -33,6 +35,7 @@ public class WebSocketEventListener {
             TChatMessage tChatMessage = new TChatMessage()
                     .setType(TChatMessage.MessageType.LEAVE)
                     .setSender(username);
+            //群发离线信息
             messagingTemplate.convertAndSend("/topic/public", tChatMessage);
         }
     }

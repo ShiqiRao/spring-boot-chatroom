@@ -32,6 +32,7 @@ public class ChatController {
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/public")
     public TChatMessage sendMessage(@Payload TChatMessage chatMessage) {
+        //在记录中留下类型为CHAT的信息
         if (chatMessage.getType() == TChatMessage.MessageType.CHAT) {
             chatMessageRepository.save(chatMessage.setCreateTime(LocalDateTime.now()));
         }
@@ -48,11 +49,9 @@ public class ChatController {
 
     @SubscribeMapping("/chat.lastTenMessage")
     public List<TChatMessage> addUser() {
+        //读取10条历史记录
         List<TChatMessage> ret = chatMessageRepository.findTop10ByOrderByCreateTimeDesc();
         ret.sort(Comparator.comparing(TChatMessage::getCreateTime));
         return ret;
     }
-
-
-
 }

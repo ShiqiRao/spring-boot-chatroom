@@ -9,6 +9,7 @@ public class SocketSecurityConfig extends AbstractSecurityWebSocketMessageBroker
 
     @Override
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
+        //将ws端点注册进安全检验中
         messages
                 .simpDestMatchers("/**").authenticated()
                 .anyMessage().authenticated();
