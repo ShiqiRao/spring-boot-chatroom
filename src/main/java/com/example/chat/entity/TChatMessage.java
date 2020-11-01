@@ -1,5 +1,6 @@
 package com.example.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -31,6 +32,7 @@ public class TChatMessage {
      * 收件人
      */
     private String receiver;
+    @JsonIgnore
     private LocalDateTime createTime;
 
     public enum MessageType {

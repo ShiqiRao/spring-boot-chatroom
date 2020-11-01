@@ -148,13 +148,14 @@ function onMessageReceived(payload) {
         var textElement = document.createElement('p');
         var messageText = document.createTextNode(message[i].content);
         textElement.appendChild(messageText);
+        messageElement.setAttribute("sender",message[i].sender);
         messageElement.appendChild(textElement);
         messageArea.appendChild(messageElement);
         messageArea.scrollTop = messageArea.scrollHeight;
 
         if(message[i].sender!=username){
-            messageElement.addEventListener('click', function(){
-                selectOrCancelReceiver(message[i].sender);
+            messageElement.addEventListener('click', function(e){
+                selectOrCancelReceiver(e.target.parentElement.getAttribute("sender"));
             }, true);
         }
     }
