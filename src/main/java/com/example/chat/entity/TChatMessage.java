@@ -15,9 +15,22 @@ import java.time.LocalDateTime;
 public class TChatMessage {
     @Id
     private String id;
+    /**
+     * 消息类型
+     */
     private MessageType type;
+    /**
+     * 消息内容
+     */
     private String content;
+    /**
+     * 发件人
+     */
     private String sender;
+    /**
+     * 收件人
+     */
+    private String receiver;
     private LocalDateTime createTime;
 
     public enum MessageType {

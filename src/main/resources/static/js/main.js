@@ -7,10 +7,13 @@ var messageForm = document.querySelector('#messageForm');
 var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
 var connectingElement = document.querySelector('.connecting');
+var sendToElement = document.querySelector('.send-to');
+var receiverElement = document.querySelector('.receiver');
 
 var stompClient = null;
 var username = null;
 var password = null;
+var receiver = null;
 
 /*登陆函数*/
 function connect(event) {
@@ -85,6 +88,8 @@ function stompConnect(){
 function onConnected() {
     //订阅群聊主题
     stompClient.subscribe('/topic/public', onMessageReceived);
+    //订阅私聊聊主题
+    stompClient.subscribe(`/user/${username}/notification`, onMessageReceived);
     //订阅获取历史记录的主题
     stompClient.subscribe('/app/chat.lastTenMessage', onMessageReceived);
     //发送加入群聊的消息
@@ -106,6 +111,7 @@ function sendMessage(event) {
     var messageContent = messageInput.value.trim();
     if(messageContent && stompClient) {
         var chatMessage = {
+            receiver:receiver,
             sender: username,
             content: messageInput.value,
             type: 'CHAT'
@@ -145,10 +151,31 @@ function onMessageReceived(payload) {
         messageElement.appendChild(textElement);
         messageArea.appendChild(messageElement);
         messageArea.scrollTop = messageArea.scrollHeight;
+
+        if(message[i].sender!=username){
+            messageElement.addEventListener('click', function(){
+                selectOrCancelReceiver(message[i].sender);
+            }, true);
+        }
     }
 }
 
+function selectOrCancelReceiver(o){
+    if(receiver == o){
+        cancelReceiver();
+    }else {
+        receiver = o;
+        sendToElement.classList.remove('hidden');
+    }
+    receiverElement.innerHTML=receiver;
+}
+
+function cancelReceiver(){
+    receiver = null;
+    sendToElement.classList.add('hidden');
+}
 
 
-usernameForm.addEventListener('submit', connect, true)
-messageForm.addEventListener('submit', sendMessage, true)
+sendToElement.addEventListener('click',cancelReceiver,true);
+usernameForm.addEventListener('submit', connect, true);
+messageForm.addEventListener('submit', sendMessage, true);

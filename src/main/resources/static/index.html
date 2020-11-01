@@ -5,11 +5,15 @@
     <title>Spring Boot WebSocket Chat Application | CalliCoder</title>
 </head>
 <style>
-      .hidden {
-    display: none;
+.hidden {
+    display: none !important;
 }
 
-
+.send-to {
+    display:inline-block;
+    color:gray;
+    margin:0;
+}
 </style>
 <body>
 <noscript>
@@ -47,6 +51,11 @@
         <form id="messageForm" name="messageForm" nameForm="messageForm">
             <div class="form-group">
                 <div class="input-group clearfix">
+                    <div class="send-to hidden">
+                        <p class="send-to">To</p>
+                        <p class="send-to receiver"></p>
+                        <p class="send-to">:</p>
+                    </div>
                     <input type="text" id="message" placeholder="Type a message..." autocomplete="off"
                            class="form-control"/>
                     <button type="submit" class="primary">Send</button>
