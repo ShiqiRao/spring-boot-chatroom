@@ -6,14 +6,12 @@ import com.example.chat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.util.Optional;
 
 @RestController
@@ -35,11 +33,6 @@ public class UserController {
             return R.failed("账号已存在");
         }
         return R.ok();
-    }
-
-    @GetMapping("/test")
-    public R<?> loginOrRegister(Principal principal) throws ServletException {
-        return R.ok(principal.getName());
     }
 
 }
